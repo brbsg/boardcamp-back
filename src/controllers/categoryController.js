@@ -1,7 +1,21 @@
 import db from "../db.js";
 import categorySchema from "../schemas/categorySchema.js";
 
-export default async function createCategory(req, res) {
+export async function getCategories(req, res) {
+  try {
+    const dbCategory = await db.query(
+      `
+      SELECT * FROM categories 
+    `
+    );
+
+    res.send(dbCategory.rows);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export async function createCategory(req, res) {
   const category = req.body;
 
   const validation = categorySchema.validate(category);
