@@ -6,7 +6,7 @@ export async function getGames(req, res) {
 
   try {
     if (!name && offset && limit) {
-      const { rows: games } = await db.query(`
+      const dbGames = await db.query(`
         SELECT
             games.*,
             categories.name AS "categoryName"
@@ -16,9 +16,9 @@ export async function getGames(req, res) {
         ${limit && `LIMIT ${parseInt(limit)}`}
     `);
 
-      return res.send(games);
+      return res.send(dbGames.rows);
     } else if (name && offset && limit) {
-      const { rows: games } = await db.query(
+      const dbGames = await db.query(
         `
             SELECT
                 games.*,
@@ -32,14 +32,14 @@ export async function getGames(req, res) {
         [`${name}%`]
       );
 
-      res.send(games);
+      return res.send(dbGames.rows);
     } else if (!name && !offset && !limit) {
-    }
-    const { rows: games } = await db.query(`
-              SELECT * FROM games
-          `);
+      const dbGames = await db.query(`
+                SELECT * FROM games
+            `);
 
-    res.send(games);
+      return res.send(dbGames.rows);
+    }
   } catch (error) {
     res.sendStatus(500);
     console.log(error);
